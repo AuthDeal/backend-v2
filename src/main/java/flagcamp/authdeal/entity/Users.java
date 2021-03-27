@@ -3,6 +3,8 @@ package flagcamp.authdeal.entity;
 import java.io.Serializable;
 import java.util.Objects;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -12,6 +14,8 @@ public class Users implements Serializable {
 
   private static final long serialVersionUID = 2681531852204068105L;
 
+  public enum Role {Client, Admin}
+
   @Id
   private String userName;
   private String password;
@@ -20,17 +24,23 @@ public class Users implements Serializable {
   private String picture;
   private String phoneNum;
 
+  @Enumerated(EnumType.STRING)
+  private Role role;
+
   public Users() {
+    this.role = Role.Client;
   }
 
+
   public Users(String userName, String password, boolean enabled, float rate,
-      String picture, String phoneNum) {
+      String picture, String phoneNum, Role role) {
     this.userName = userName;
     this.password = password;
     this.enabled = enabled;
     this.rate = rate;
     this.picture = picture;
     this.phoneNum = phoneNum;
+    this.role = role;
   }
 
   public static long getSerialVersionUID() {
@@ -85,6 +95,14 @@ public class Users implements Serializable {
     this.phoneNum = phoneNum;
   }
 
+  public Role getRole() {
+    return role;
+  }
+
+  public void setRole(Role role) {
+    this.role = role;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -99,13 +117,15 @@ public class Users implements Serializable {
         Objects.equals(getUserName(), users.getUserName()) &&
         Objects.equals(getPassword(), users.getPassword()) &&
         Objects.equals(getPicture(), users.getPicture()) &&
-        Objects.equals(getPhoneNum(), users.getPhoneNum());
+        Objects.equals(getPhoneNum(), users.getPhoneNum()) &&
+        getRole() == users.getRole();
   }
 
   @Override
   public int hashCode() {
     return Objects
-        .hash(getUserName(), getPassword(), isEnabled(), getRate(), getPicture(), getPhoneNum());
+        .hash(getUserName(), getPassword(), isEnabled(), getRate(), getPicture(), getPhoneNum(),
+            getRole());
   }
 
   @Override
@@ -117,6 +137,7 @@ public class Users implements Serializable {
         ", rate=" + rate +
         ", picture='" + picture + '\'' +
         ", phoneNum='" + phoneNum + '\'' +
+        ", role=" + role +
         '}';
   }
 }

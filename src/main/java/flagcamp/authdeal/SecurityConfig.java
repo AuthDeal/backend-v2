@@ -23,14 +23,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .formLogin()
         .and()
         .authorizeRequests()
-          .antMatchers(HttpMethod.GET, "/**").hasAnyAuthority("ROLE_ADMIN");
+          .antMatchers(HttpMethod.GET, "/**").hasAnyAuthority("Client", "Admin");
 
     http
         .authorizeRequests()
-          .antMatchers("/users*/**").hasAuthority("ROLE_USER")
-          .antMatchers("/order/**").hasAuthority("ROLE_ADMIN")
-          .antMatchers("/item*/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
-          .antMatchers("/messages/**").hasAuthority("ROLE_ADMIN")
+          .antMatchers("/users*/**").hasAnyAuthority("Client", "Admin")
+          .antMatchers("/order/**").hasAnyAuthority("Client", "Admin")
+          .antMatchers("/item*/**").hasAnyAuthority("Client", "Admin")
+          .antMatchers("/messages/**").hasAnyAuthority("Client", "Admin")
           .anyRequest().permitAll();
   }
 
@@ -39,7 +39,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     auth.inMemoryAuthentication()
         .withUser("admin")
         .password("admin")
-        .authorities("ROLE_ADMIN").and().passwordEncoder(passwordEncoder());
+        .authorities("Admin").and().passwordEncoder(passwordEncoder());
+
+    auth
+        .jdbcAuthentication()
+        .dataSource(dataSource)
+        .usersByUsernameQuery("SELECT user_name, password, enabled FROM users WHERE user_name=?")
+        .authoritiesByUsernameQuery("SELECT user_name, role FROM users WHERE user_name=?")
+        .passwordEncoder(passwordEncoder());
   }
 
   @SuppressWarnings("deprecation")
