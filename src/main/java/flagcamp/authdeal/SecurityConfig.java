@@ -22,14 +22,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     http.csrf().disable()
         .formLogin()
         .and()
-        .authorizeRequests()
-          .antMatchers(HttpMethod.GET, "/**").hasAnyAuthority("Client", "Admin");
+        .authorizeRequests();
+//          .antMatchers(HttpMethod.GET, "/**").hasAnyAuthority("Client", "Admin");
 
     http
         .authorizeRequests()
           .antMatchers("/users*/**").hasAnyAuthority("Client", "Admin")
           .antMatchers("/order/**").hasAnyAuthority("Client", "Admin")
-          .antMatchers("/item*/**").hasAnyAuthority("Client", "Admin")
+//          .antMatchers("/item*/**").hasAnyAuthority("Client", "Admin")
           .antMatchers("/messages/**").hasAnyAuthority("Client", "Admin")
           .anyRequest().permitAll();
   }
